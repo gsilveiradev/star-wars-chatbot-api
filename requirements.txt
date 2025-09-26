@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+httpx
+boto3
+orjson
+pydantic-settings
+python-json-logger
