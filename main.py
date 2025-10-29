@@ -1,6 +1,9 @@
 import logging, time, uuid
+
 from fastapi import FastAPI, Request
+
 from app.routes.chat import router as chat_router
+from app.routes.stream import router as stream_router
 from app.routes.suggestions import router as suggestions_router
 from app.routes.debug import router as listmodels_router
 from app.routes.health import router as health_router
@@ -43,6 +46,7 @@ async def json_logger_middleware(request: Request, call_next):
         log_extra_data.reset(token)
 
 app.include_router(chat_router, tags=["chat"])
+app.include_router(stream_router, tags=["stream"])
 app.include_router(suggestions_router, tags=["suggestions"])
 app.include_router(listmodels_router, tags=["list"])
 app.include_router(health_router, tags=["health"])

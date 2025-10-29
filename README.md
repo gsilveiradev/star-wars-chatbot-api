@@ -88,12 +88,9 @@ When asking LLM model to suggest questions, it is provided with some context abo
 Send a POST to http://localhost:8000/suggestions/
 
 ```bash
-curl --location 'localhost:8000/suggestions/' \
---header 'Content-Type: application/json' \
---data '{
-    "people": "Luke",
-    "starships": "X-wing"
-}'
+curl -N -X POST 'http://localhost:8000/suggestions' \
+  -H 'Content-Type: application/json' \
+  -d '{"people": "Luke","starships": "X-wing"}'
 ```
 
 ## /chat endpoint
@@ -105,11 +102,45 @@ In this iteration, there is no conversation memory, so each question is treated 
 Send a POST to http://localhost:8000/chat/
 
 ```bash
-curl --location 'localhost:8000/chat/' \
---header 'Content-Type: application/json' \
---data '{
-    "user_input": "How does the X-wing starfighter compare to other ships in the Star Wars universe?"
-}'
+curl -N -X POST 'http://localhost:8000/chat' \
+  -H 'Content-Type: application/json' \
+  -d '{"user_input": "How does the X-wing starfighter compare to other ships in the Star Wars universe?"}'
+```
+
+## /stream endpoint
+
+The /stream is the streamed version of /chat endpoint. It uses SSE (server-sent events) to dispatch the LLM model responses.
+
+This way, the user interaction is expected to be faster and more interative.
+
+Send a POST to http://localhost:8000/stream/
+
+```bash
+curl -N -X POST 'http://localhost:8000/stream' \
+  -H 'Content-Type: application/json' \
+  -d '{"user_input":"Who was Luke Skywalker and which starships he piloted? Answer in less than 20 words."}'
+```
+
+The answer will be streamed back as server-sent events. Like this:
+
+```
+data: {"delta": "Sure, I'd be happy to tell you about Luke Skywalker and his starships! Let me check that information for you."}
+data: {"tool_event": {"used": true, "names": ["getPeople", "getStarships"]}}
+data: {"delta": "Luke"}
+data: {"delta": " Skywalker"}
+data: {"delta": " was a"}
+data: {"delta": " Jedi Knight an"}
+data: {"delta": "d hero"}
+data: {"delta": " of the Rebel"}
+data: {"delta": " Alliance."}
+data: {"delta": " He piloted X"}
+data: {"delta": "-wings"}
+data: {"delta": " an"}
+data: {"delta": "d other starships in"}
+data: {"delta": " his"}
+data: {"delta": " adventures"}
+data: {"delta": "."}
+data: {"done": true}
 ```
 
 # Debugging
